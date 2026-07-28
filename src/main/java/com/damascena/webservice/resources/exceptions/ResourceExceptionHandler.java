@@ -1,5 +1,6 @@
 package com.damascena.webservice.resources.exceptions;
 
+import com.damascena.webservice.services.exceptions.DatabaseException;
 import com.damascena.webservice.services.exceptions.ResourceNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,14 @@ public class ResourceExceptionHandler {
     public ResponseEntity<StandardError> ResourceNotFoundException(ResourceNotFoundException e, HttpServletRequest request) {
         String error = "Resource Not Found";
         HttpStatus status = HttpStatus.NOT_FOUND;
+        StandardError err =  new StandardError(Instant.now(), status.value(),error, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<StandardError> dataBase(DatabaseException e, HttpServletRequest request) {
+        String error = "Database Error";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         StandardError err =  new StandardError(Instant.now(), status.value(),error, e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
